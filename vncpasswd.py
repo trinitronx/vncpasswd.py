@@ -10,9 +10,7 @@ def do_crypt(password, decrypt):
     key = d.deskey(strkey, decrypt)
 
     crypted = d.desfunc(passpadd, key)
-    print "Encrypted Bin Pass= '%s'" % crypted
-    print "Encrypted Hex Pass= '%s'" % crypted.encode('hex')
-    return crypted.encode('hex')
+    return crypted
     
 def main():
     parser = argparse.ArgumentParser(description='Encrypt or Decrypt a VNC password')
@@ -27,7 +25,10 @@ def main():
   
     args = parser.parse_args()
     import sys
-    print do_crypt(args.passwd, args.decrypt)
+    crypted = do_crypt(args.passwd, args.decrypt)
+    prefix = ('En','De')[args.decrypt == True]
+    print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )
+    print "%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') )
 
 if __name__ == '__main__':
 	main()

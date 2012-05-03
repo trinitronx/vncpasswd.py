@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
-import sys
+#import sys
 import d3des as d
 import argparse
-from struct import pack, unpack
+#from struct import pack, unpack
 
 def do_crypt(password, decrypt):
     passpadd = (password + '\x00'*8)[:8]
     strkey = ''.join([ chr(x) for x in d.vnckey ])
     key = d.deskey(strkey, decrypt)
-    
     crypted = d.desfunc(passpadd, key)
     return crypted
 
@@ -40,7 +39,7 @@ def main():
             help="Input or Output to a specified file.")
     parser.add_argument("passwd", nargs='?', \
             help="A password to encrypt")
-  
+
     args = parser.parse_args()
     if ( args.filename == None and args.passwd == None ):
         parser.error('Error: No password file or password passed\n')
@@ -48,12 +47,12 @@ def main():
 	    args.passwd = args.passwd.decode('hex')
     if ( args.filename != None and args.decrypt ):
         args.passwd = do_file_in(args.filename, args.hex)
-    
+
     crypted = do_crypt(args.passwd, args.decrypt)
-    
+
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
-    
+
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )
     print "%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') )

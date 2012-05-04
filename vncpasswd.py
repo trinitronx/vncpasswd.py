@@ -20,7 +20,8 @@ def do_file_in(filename, inhex):
     data = f.read()
     f.close()
     if ( inhex ):
-        data = data.decode('hex')
+        data = data.strip()
+        data = unhex(data)
     return data
 
 def do_file_out(filename, data, inhex):
@@ -30,7 +31,7 @@ def do_file_out(filename, data, inhex):
     f.write(data)
     f.close()
 
-def hex(s):
+def unhex(s):
     try:
         s = s.decode('hex')
     except TypeError as e:
@@ -59,7 +60,7 @@ def main():
     if ( args.filename == None and args.passwd == None ):
         parser.error('Error: No password file or password passed\n')
     if ( args.passwd != None and args.hex ):
-        args.passwd = hex(args.passwd)
+        args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
         args.passwd = do_file_in(args.filename, args.hex)
 

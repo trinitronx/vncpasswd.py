@@ -69,12 +69,13 @@ def main():
     # (1 hex char = 4 binary bits = 1 nibble)
     hexpasswd = args.passwd.encode('hex')
     if ( len(hexpasswd) > 16 and (len(hexpasswd) % 16) == 0 ):
+        print 'INFO: Detected ciphertext > 64 bits... breaking into blocks to decrypt...'
         splitstr = split_len(args.passwd.encode('hex'), 16)
-        print 'splitstr = %s' % splitstr
+        print 'INFO: Split blocks = %s' % splitstr
         cryptedblocks = []
         for sblock in splitstr:
             cryptedblocks.append( do_crypt(sblock.decode('hex'), args.decrypt) )
-            print '%016s\t%s' % ( sblock, cryptedblocks )
+            #print '%016s\t%s' % ( sblock, cryptedblocks )
             crypted = ''.join(cryptedblocks)
     elif ( len(hexpasswd) <= 16):
         crypted = do_crypt(args.passwd, args.decrypt)

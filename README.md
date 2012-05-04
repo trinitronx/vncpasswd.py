@@ -20,12 +20,15 @@ Thanks / Props
 Many thanks to the original authors of the d3des libary
 (Richard Outerbridge, Dan Hoey, Jim Gillogly, Phil Karn, et. al.), 
 and it's python rewrite (Yusuke Shinyama)!
-Thanks to Darren McCall for his wonderful collection of [RealVNC Registry Hacks][1]
+Thanks to Mike Miller for his great [blog post][1] on how he used the d3des.py library.
+Thanks to Darren McCall for his wonderful collection of [RealVNC Registry Hacks][2]
 And finally...
 Thanks to God for the inspiration to reverse engineer RealVNC's multi-block 
 method for encrypting long passwords ;-D
 (Long story... recovering my *long* RealVNC password saved a bunch of my data!)
 
 References:
-[1]: http://darrenmccall.com/blog/2010/04/30/realvnc-password-hacking/
+[1]: http://www.geekademy.com/2010/10/creating-hashed-password-for-vnc.html
+    "Creating a Hashed Password for VNC"
+[2]: http://darrenmccall.com/blog/2010/04/30/realvnc-password-hacking/
     "RealVNC Password Hacking"

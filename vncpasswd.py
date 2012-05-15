@@ -2,6 +2,7 @@
 
 #import sys
 import d3des as d
+import WindowsRegistry as wreg
 import argparse
 #from struct import pack, unpack
 
@@ -51,14 +52,20 @@ def main():
             help="Encrypt a plaintext password. (default mode)")
     parser.add_argument("-H", "--hex", dest="hex", action="store_true", default=False, \
             help="Assume input is in hex.")
+    parser.add_argument("-R", "--registry", dest="registry", action="store_true", default=False, \
+            help="Input or Output to the windows registry.")
     parser.add_argument("-f", "--file", dest="filename", \
             help="Input or Output to a specified file.")
     parser.add_argument("passwd", nargs='?', \
             help="A password to encrypt")
 
     args = parser.parse_args()
-    if ( args.filename == None and args.passwd == None ):
+    if ( args.filename == None and args.passwd == None and args.registry == False ):
         parser.error('Error: No password file or password passed\n')
+    if ( args.registry ):
+        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4", 0)
+        print reg
+        print reg.get("Password")
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):

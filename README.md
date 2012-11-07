@@ -2,6 +2,7 @@ vncpasswd.py
 ============
 
 Python implementation of vncpasswd, w/decryption abilities & extra features ;-)
+Tested on Python 2.7.3.  (Does not currently work with Python 3)
 
 List of Extra Features:
 -----------------------

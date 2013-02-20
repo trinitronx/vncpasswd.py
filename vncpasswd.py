@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 
+"""vncpasswd.py: Python implementation of vncpasswd, w/decryption abilities & extra features ;-)"""
+
+__author__      = "James Cuzella"
+__copyright__   = "Copyright 2012, James Cuzella"
+__credits__ = [ 'Yusuke Shinyama', 'Richard Outerbridge', 'Dan Hoey', 'Jim Gillogly', 'Phil Karn' ]
+__license__ = "MIT"
+__version__ = "0.0.2"
+__maintainer__ = "James Cuzella"
+
 import sys
-import d3des as d
 import argparse
 #from struct import pack, unpack
+
+import d3des as d
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]

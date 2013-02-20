@@ -3,7 +3,7 @@
 """vncpasswd.py: Python implementation of vncpasswd, w/decryption abilities & extra features ;-)"""
 
 __author__      = "James Cuzella"
-__copyright__   = "Copyright 2012, James Cuzella"
+__copyright__   = "Copyright 2012,2013, James Cuzella"
 __credits__ = [ 'Yusuke Shinyama', 'Richard Outerbridge', 'Dan Hoey', 'Jim Gillogly', 'Phil Karn' ]
 __license__ = "MIT"
 __version__ = "0.0.2"

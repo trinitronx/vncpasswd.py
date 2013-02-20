@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#import sys
+import sys
 import d3des as d
 import argparse
 #from struct import pack, unpack
@@ -27,11 +27,39 @@ def do_file_in(filename, inhex):
 def do_file_out(filename, data, inhex):
     f = open(filename, 'w')
     if ( inhex ):
-	    data = data.encode('hex')
+        data = data.encode('hex')
     f.write(data)
     f.close()
 
 def unhex(s):
+    """
+    Decodes a string of hex characters
+
+    Return: This method returns an decoded version of the string.
+    If a hexidecimal string with odd length is passed, the last character is chopped off and the decoded version of this is returned.
+
+    Example:
+        >>> unhex("48656c6c6f20576f726c64")
+        'Hello World'
+        >>> unhex("48656c6c6f20576f726c6")
+        WARN: Odd-length string . Chopping last char off... "48656c6c6f20576f726c"
+        'Hello Worl'
+        >>> unhex('303132333435363738396162636465666768696a6b6c6d6e6f707172737475767778797a4142434445464748494a4b4c4d4e4f505152535455565758595a2122232425262728292a2b2c2d2e2f3a3b3c3d3e3f405b5c5d5e5f607b7c7d7e20090a0d0b0c')
+        '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ \\t\\n\\r\\x0b\\x0c'
+        >>> unhex('000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F')
+        '\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f'
+        >>> unhex('abcdefghijklmnop')
+        Traceback (most recent call last):
+          File "/usr/lib/python2.7/doctest.py", line 1289, in __run
+            compileflags, 1) in test.globs
+          File "<doctest __main__.unhex[2]>", line 1, in <module>
+            unhex('abcdefghijklmnop')
+          File "./vncpasswd.py", line 51, in unhex
+            s = s.decode('hex')
+          File "/usr/lib/python2.7/encodings/hex_codec.py", line 42, in hex_decode
+            output = binascii.a2b_hex(input)
+        TypeError: Non-hexadecimal digit found
+    """
     try:
         s = s.decode('hex')
     except TypeError as e:
@@ -42,6 +70,24 @@ def unhex(s):
             raise
     return s
 
+def run_tests(verbose=False):
+    print "Running Unit Tests..."
+    import doctest
+    import __main__
+    (failure_count, test_count) = doctest.testmod(None, None, None, verbose, True)
+    pass_count = test_count - failure_count
+
+    methods = dir(__main__)
+    ignore_methods = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', '__warningregistry__', 'argparse', 'sys' ]
+    methods = [i for i in methods if not i in ignore_methods or ignore_methods.remove(i)]
+
+    print '%d tests in %s items.' % ( test_count, len(methods) )
+    if failure_count > 0:
+        print '%d out of %d tests failed' % (failure_count, test_count)
+    else:
+        print '%d passed and %d failed.' % ( pass_count, failure_count )
+        print 'Test passed.'
+    sys.exit(failure_count)
 
 def main():
     parser = argparse.ArgumentParser(description='Encrypt or Decrypt a VNC password')
@@ -55,8 +101,13 @@ def main():
             help="Input or Output to a specified file.")
     parser.add_argument("passwd", nargs='?', \
             help="A password to encrypt")
+    parser.add_argument("-t", "--test", dest="test", action="store_true", default=False, \
+            help="Run the unit tests for this program.")
 
     args = parser.parse_args()
+    if (args.test):
+        run_tests()
+
     if ( args.filename == None and args.passwd == None ):
         parser.error('Error: No password file or password passed\n')
     if ( args.passwd != None and args.hex ):

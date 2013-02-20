@@ -34,6 +34,13 @@ TODO:
 - Support read/write to windows registry keys
 
 References:
+-----------
+
+ - [Creating a Hashed Password for VNC][1]
+ - [RealVNC Password Hacking][2]
+ - [Email Thread: Registry Edit to define server password][3]
+ - [Email Thread on User vs. System passwords: Password Shift][4]
+
 [1]: http://www.geekademy.com/2010/10/creating-hashed-password-for-vnc.html
     "Creating a Hashed Password for VNC"
 [2]: http://darrenmccall.com/blog/2010/04/30/realvnc-password-hacking/

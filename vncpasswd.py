@@ -62,10 +62,9 @@ def main():
     args = parser.parse_args()
     if ( args.filename == None and args.passwd == None and args.registry == False ):
         parser.error('Error: No password file or password passed\n')
-    if ( args.registry ):
-        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4", 0)
-        print reg
-        print reg.get("Password")
+    if ( args.registry and args.decrypt ):
+        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
+        ( args.passwd, key_type) = reg.getval("Password")
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
@@ -95,6 +94,9 @@ def main():
 
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
+    if ( args.registry and not args.decrypt ):
+        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
+        reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
 
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )

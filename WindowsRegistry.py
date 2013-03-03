@@ -43,7 +43,8 @@ class WindowsRegistry:
         self.project = project
         self.keyname = "Software\\%s\\%s" % (self.company, self.project)
         self.key = None
-        self.can_write = None
+        self.can_write = False
+        self.right = None
 
         rights = [ wreg.KEY_ALL_ACCESS, wreg.KEY_WRITE, wreg.KEY_READ, wreg.KEY_CREATE_SUB_KEY, wreg.KEY_SET_VALUE, wreg.KEY_ENUMERATE_SUB_KEYS, wreg.KEY_QUERY_VALUE ]
         
@@ -57,10 +58,14 @@ class WindowsRegistry:
                 #print "rights = %05x" % rights[i]
                 #print "Rights were: %s" % WindowsRegistry.RIGHTSDICT[rights[i]]
                 #print "self.key = %s" % self.key
-            except Exception as e:
+            except WindowsError as e:
                 if self.create:
-                    self.key = wreg.CreateKey(wreg.HKEY_LOCAL_MACHINE, self.keyname)
-                    not_opened = False
+                    try:
+                        self.key = wreg.CreateKeyEx(wreg.HKEY_LOCAL_MACHINE, self.keyname,0, rights[i])
+                        not_opened = False
+                        self.right = rights[i]
+                    except WindowsError:
+                        pass
                 #print "Error: ", sys.exc_info()[0]
                 #print "%s" % e.strerror
                 #print i
@@ -68,9 +73,10 @@ class WindowsRegistry:
                 i=i+1
         if self.key == None:
             print e.strerror
+            print "Failed to open Registry with rights = %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[rights[i]], rights[i] )
             print "Try running as Administrator?"
             raise e
-        if self.create or self.right in WindowsRegistry.RIGHTS_WRITABLE:
+        if self.right in WindowsRegistry.RIGHTS_WRITABLE:
             self.can_write = True
 
     def getval(self, name):
@@ -192,6 +198,7 @@ if __name__=="__main__":
         # Run unit tests
         verbose=False
         doctest.testmod(None, None, None, verbose, True)
+        if r.key: print "Registry opened with: %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[r.right], r.right )
         r.del_subkey('test')
         r.del_subkey("testp_int")
         r.del_subkey("testp_str")
@@ -201,10 +208,10 @@ if __name__=="__main__":
         r.del_subkey("testp_unicode")
         r.del_subkey("testp_tuple")
         r.delval('test_stringval')
+        
         # Cleanup the subkeys that the instance can't access
         wreg.DeleteKey(wreg.HKEY_LOCAL_MACHINE, r.keyname)
         wreg.DeleteKey(wreg.HKEY_LOCAL_MACHINE, 'Software\\Santo Spirito')
         r.close()
     except WindowsError as e:
-        print e.strerror
-        print "Try running as Administrator?"
+        pass

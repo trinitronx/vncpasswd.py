@@ -11,9 +11,12 @@ List of Extra Features:
  - Decryption / Password recovery!
  - Supports RealVNC long passwords!
  - Hex input and output
+ - Read/Write to windows RealVNC registry key
 
 Long password decryption tested against RealVNC Enterprise Edition, 
 version: _E4.5.3 (r39012)_ 64-bit (x64) unicode
+
+Windows Registry I/O tested on Windows 7 x64 Professional
 
 Thanks / Props
 --------------
@@ -28,10 +31,14 @@ Thanks to God for the inspiration to reverse engineer RealVNC's multi-block
 method for encrypting long passwords ;-D
 (Long story... recovering my *long* RealVNC password saved a bunch of my data!)
 
-TODO:
------
 
-- Support read/write to windows registry keys
+Disclaimer:
+-----------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Please only use this software for Good, and don't harm directly or indirectly living beings
+
 
 References:
 -----------

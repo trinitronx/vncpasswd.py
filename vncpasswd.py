@@ -127,7 +127,7 @@ def main():
     if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
         reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
         ( args.passwd, key_type) = reg.getval("Password")
-    elif platform.system().startswith('Windows'):
+    elif not platform.system().startswith('Windows'):
 	print 'Cannot read from Windows Registry on a %s system' % platform.system()
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
@@ -161,7 +161,7 @@ def main():
     if ( args.registry and not args.decrypt and platform.system().startswith('Windows')):
         reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
         reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
-    elif platform.system().startswith('Windows'):
+    elif not platform.system().startswith('Windows'):
 	print 'Cannot write to Windows Registry on a %s system' % platform.system()
 
     prefix = ('En','De')[args.decrypt == True]

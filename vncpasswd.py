@@ -14,6 +14,7 @@ import argparse
 #from struct import pack, unpack
 
 import d3des as d
+import WindowsRegistry as wreg
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]
@@ -107,6 +108,8 @@ def main():
             help="Encrypt a plaintext password. (default mode)")
     parser.add_argument("-H", "--hex", dest="hex", action="store_true", default=False, \
             help="Assume input is in hex.")
+    parser.add_argument("-R", "--registry", dest="registry", action="store_true", default=False, \
+            help="Input or Output to the windows registry.")
     parser.add_argument("-f", "--file", dest="filename", \
             help="Input or Output to a specified file.")
     parser.add_argument("passwd", nargs='?', \
@@ -118,8 +121,11 @@ def main():
     if (args.test):
         run_tests()
 
-    if ( args.filename == None and args.passwd == None ):
+    if ( args.filename == None and args.passwd == None and args.registry == False ):
         parser.error('Error: No password file or password passed\n')
+    if ( args.registry and args.decrypt ):
+        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
+        ( args.passwd, key_type) = reg.getval("Password")
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
@@ -149,6 +155,9 @@ def main():
 
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
+    if ( args.registry and not args.decrypt ):
+        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
+        reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
 
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )

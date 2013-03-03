@@ -11,10 +11,11 @@ __maintainer__ = "James Cuzella"
 
 import sys
 import argparse
+import platform
 #from struct import pack, unpack
 
 import d3des as d
-import WindowsRegistry as wreg
+if platform.system().startswith('Windows'): import WindowsRegistry as wreg 
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]
@@ -121,11 +122,13 @@ def main():
     if (args.test):
         run_tests()
 
-    if ( args.filename == None and args.passwd == None and args.registry == False ):
+    if ( args.filename == None and args.passwd == None and (args.registry == False or not platform.system().startswith('Windows')) ):
         parser.error('Error: No password file or password passed\n')
-    if ( args.registry and args.decrypt ):
+    if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
         reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
         ( args.passwd, key_type) = reg.getval("Password")
+    elif platform.system().startswith('Windows'):
+	print 'Cannot read from Windows Registry on a %s system' % platform.system()
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
@@ -155,9 +158,11 @@ def main():
 
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
-    if ( args.registry and not args.decrypt ):
+    if ( args.registry and not args.decrypt and platform.system().startswith('Windows')):
         reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
         reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
+    elif platform.system().startswith('Windows'):
+	print 'Cannot write to Windows Registry on a %s system' % platform.system()
 
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )

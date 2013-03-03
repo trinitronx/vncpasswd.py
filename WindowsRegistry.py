@@ -3,8 +3,25 @@ import _winreg as wreg
 import cPickle as pickle
 
 class WindowsRegistry:
+    # Registry Data types
+    REG_NONE                = wreg.REG_NONE          # No value type
+    REG_SZ                  = wreg.REG_SZ            # Unicode nul terminated string
+    REG_EXPAND_SZ           = wreg.REG_EXPAND_SZ     # Unicode nul terminated string
+                                                     # (with environment variable references)
+    REG_BINARY              = wreg.REG_BINARY        #   // Free form binary
+    REG_DWORD               = wreg.REG_DWORD         #   // 32-bit number
+    REG_DWORD_LITTLE_ENDIAN = wreg.REG_DWORD_LITTLE_ENDIAN #   // 32-bit number (same as REG_DWORD)
+    REG_DWORD_BIG_ENDIAN    = wreg.REG_DWORD_BIG_ENDIAN    #   // 32-bit number
+    REG_LINK                = wreg.REG_LINK          #   // Symbolic Link (unicode)
+    REG_MULTI_SZ            = wreg.REG_MULTI_SZ      #   // Multiple Unicode strings
+    REG_RESOURCE_LIST       = wreg.REG_RESOURCE_LIST #   // Resource list in the resource map
+    REG_FULL_RESOURCE_DESCRIPTOR = wreg.REG_FULL_RESOURCE_DESCRIPTOR # Resource list in the hardware description
+    REG_RESOURCE_REQUIREMENTS_LIST  = wreg.REG_RESOURCE_REQUIREMENTS_LIST
 
-    def __init__(self, company="RealVNC", project="WinVNC4", create=1):
+    RIGHTSDICT = {  wreg.KEY_ALL_ACCESS: 'KEY_ALL_ACCESS', wreg.KEY_WRITE: 'KEY_WRITE', wreg.KEY_READ: 'KEY_READ', wreg.KEY_QUERY_VALUE: 'KEY_QUERY_VALUE', wreg.KEY_SET_VALUE: 'KEY_SET_VALUE', wreg.KEY_CREATE_SUB_KEY: 'KEY_CREATE_SUB_KEY', wreg.KEY_ENUMERATE_SUB_KEYS: 'KEY_ENUMERATE_SUB_KEYS' }
+    RIGHTS_WRITABLE = [ wreg.KEY_ALL_ACCESS, wreg.KEY_WRITE, wreg.KEY_CREATE_SUB_KEY, wreg.KEY_SET_VALUE ]
+        
+    def __init__(self, company="RealVNC", project="WinVNC4", create=0):
         """
             Constructor to open registry key
 
@@ -17,26 +34,29 @@ class WindowsRegistry:
             >>> r = WindowsRegistry('Santo Spirito', 'TestKey', create=1)
             >>> isinstance(r, WindowsRegistry)
             True
+            >>> r.key.__class__
+            <type 'PyHKEY'>
             
         """
         self.create = create
         self.company = company
         self.project = project
         self.keyname = "Software\\%s\\%s" % (self.company, self.project)
+        self.key = None
+        self.can_write = None
 
         rights = [ wreg.KEY_ALL_ACCESS, wreg.KEY_WRITE, wreg.KEY_READ, wreg.KEY_CREATE_SUB_KEY, wreg.KEY_SET_VALUE, wreg.KEY_ENUMERATE_SUB_KEYS, wreg.KEY_QUERY_VALUE ]
-        rightsdict = {  wreg.KEY_ALL_ACCESS: 'KEY_ALL_ACCESS', wreg.KEY_WRITE: 'KEY_WRITE', wreg.KEY_READ: 'KEY_READ', wreg.KEY_QUERY_VALUE: 'KEY_QUERY_VALUE', wreg.KEY_SET_VALUE: 'KEY_SET_VALUE', wreg.KEY_CREATE_SUB_KEY: 'KEY_CREATE_SUB_KEY', wreg.KEY_ENUMERATE_SUB_KEYS: 'KEY_ENUMERATE_SUB_KEYS' }
-        rights_writable = [ wreg.KEY_ALL_ACCESS, wreg.KEY_WRITE, wreg.KEY_CREATE_SUB_KEY, wreg.KEY_SET_VALUE ]
-        self.key = None
+        
         not_opened = True
         i=0
         while not_opened and i<len(rights)-1:
             try:
-                self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname,0, rights[0])
+                self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname,0, rights[i])
                 not_opened = False
                 self.right = rights[i]
                 #print "rights = %05x" % rights[i]
-                #print "Rights were: %s" % rightsdict[rights[i]]
+                #print "Rights were: %s" % WindowsRegistry.RIGHTSDICT[rights[i]]
+                #print "self.key = %s" % self.key
             except Exception as e:
                 if self.create:
                     self.key = wreg.CreateKey(wreg.HKEY_LOCAL_MACHINE, self.keyname)
@@ -44,8 +64,14 @@ class WindowsRegistry:
                 #print "Error: ", sys.exc_info()[0]
                 #print "%s" % e.strerror
                 #print i
-                #print "Tried rights = %s (0x%x)" % ( rightsdict[rights[i]], rights[i] )
+                #print "Tried rights = %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[rights[i]], rights[i] )
                 i=i+1
+        if self.key == None:
+            print e.strerror
+            print "Try running as Administrator?"
+            raise e
+        if self.create or self.right in WindowsRegistry.RIGHTS_WRITABLE:
+            self.can_write = True
 
     def getval(self, name):
         """ Get value for key in registry """
@@ -68,8 +94,8 @@ class WindowsRegistry:
             >>> r.getval('test_stringval')
             (u'string', 1)
         """
-        if not self.create and not self.right in rights_writable:
-            raise Exception, "registry is read only"
+        if not self.can_write:
+            raise WindowsError, "Registry opened with read-only rights %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[self.right], self.right )
         if value_type == wreg.REG_SZ:
             value = str(value)
         wreg.SetValueEx(self.key, name, 0, value_type, value)
@@ -83,8 +109,8 @@ class WindowsRegistry:
             >>> r.get_subkey('test')
             'test_str'
         """
-        if not self.create and not self.right in rights_writable:
-            raise Exception, "registry is read only"
+        if not self.can_write:
+            raise WindowsError, "Registry opened with read-only rights %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[self.right], self.right )
         wreg.SetValue(self.key, subkey_name, wreg.REG_SZ, str(value))
 
     def pset_subkey(self, name, value):
@@ -129,6 +155,8 @@ class WindowsRegistry:
             ...     print 'delete success'
             delete success
         """
+        if not self.can_write:
+            raise WindowsError, "Registry opened with read-only rights %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[self.right], self.right )
         wreg.DeleteKey(self.key, subkey_name)
     def delval(self, name):
         """
@@ -143,6 +171,8 @@ class WindowsRegistry:
             ...     print 'delete success'
             delete success
         """
+        if not self.can_write:
+            raise WindowsError, "Registry opened with read-only rights %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[self.right], self.right )
         wreg.DeleteValue(self.key, name)
     def close(self):
         """

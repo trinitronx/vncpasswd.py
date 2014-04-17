@@ -1,7 +1,14 @@
+<div><img height="29" align="right" src="http://img.shields.io/badge/Help_make_free_software_better_--_Please-DONATE-brightgreen.svg" /></div>
 vncpasswd.py
 ============
-[![Build Status](http://img.shields.io/travis/trinitronx/vncpasswd.py.svg)](https://travis-ci.org/trinitronx/vncpasswd.py)
-[![Gittip](http://img.shields.io/gittip/trinitronx.svg)](https://www.gittip.com/trinitronx)
+
+[![Build Status][travis-button]][travis-builds]
+
+[travis-button]: http://img.shields.io/travis/trinitronx/vncpasswd.py.svg
+[travis-builds]: https://travis-ci.org/trinitronx/vncpasswd.py
+[gittip-donate-button]: http://img.shields.io/badge/Help_make_free_software_better_--_Please-DONATE-brightgreen.svg
+[gittip-profile]: https://www.gittip.com/trinitronx
+[gittip-donate-realtime]: http://img.shields.io/gittip/trinitronx.svg
 
 Python implementation of vncpasswd, w/decryption abilities & extra features ;-)
 Tested on Python 2.7.3.  (Does not currently work with Python 3)

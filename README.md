@@ -2,6 +2,7 @@ vncpasswd.py
 ============
 
 [![Build Status](https://travis-ci.org/trinitronx/vncpasswd.py.png?branch=master)](https://travis-ci.org/trinitronx/vncpasswd.py)
+[![Gittip](http://img.shields.io/gittip/trinitronx.svg)](https://www.gittip.com/trinitronx)
 
 Python implementation of vncpasswd, w/decryption abilities & extra features ;-)
 Tested on Python 2.7.3.  (Does not currently work with Python 3)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """vncpasswd.py: Python implementation of vncpasswd, w/decryption abilities & extra features ;-)"""
 

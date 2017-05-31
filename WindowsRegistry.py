@@ -1,6 +1,7 @@
 import sys
 import _winreg as wreg
 import cPickle as pickle
+import platform
 
 class WindowsRegistry:
     """ A class to simplify read/write access to the Windows Registry """
@@ -58,7 +59,12 @@ class WindowsRegistry:
         i=0
         while not_opened and i<len(rights)-1:
             try:
-                self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname,0, rights[i])
+                if platform.machine().endswith('64') and platform.architecture()[0] == '32bit':
+                    print('yes')
+                    print(rights[i])
+                    self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname, 0, rights[i] | wreg.KEY_WOW64_64KEY)
+                else:
+                    self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname,0, rights[i])
                 not_opened = False
                 self.right = rights[i]
                 #print "rights = %05x" % rights[i]

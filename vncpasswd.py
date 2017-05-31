@@ -125,7 +125,7 @@ def main():
     if ( args.filename == None and args.passwd == None and (args.registry == False or not platform.system().startswith('Windows')) ):
         parser.error('Error: No password file or password passed\n')
     if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
-        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
+        reg = wreg.WindowsRegistry("RealVNC", "vncserver")
         ( args.passwd, key_type) = reg.getval("Password")
     elif not platform.system().startswith('Windows'):
 	print 'Cannot read from Windows Registry on a %s system' % platform.system()
@@ -159,7 +159,7 @@ def main():
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
     if ( args.registry and not args.decrypt and platform.system().startswith('Windows')):
-        reg = wreg.WindowsRegistry("RealVNC", "WinVNC4")
+        reg = wreg.WindowsRegistry("RealVNC", "vncserver")
         reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
     elif not platform.system().startswith('Windows'):
 	print 'Cannot write to Windows Registry on a %s system' % platform.system()

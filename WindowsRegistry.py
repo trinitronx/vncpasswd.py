@@ -60,8 +60,6 @@ class WindowsRegistry:
         while not_opened and i<len(rights)-1:
             try:
                 if platform.machine().endswith('64') and platform.architecture()[0] == '32bit':
-                    print('yes')
-                    print(rights[i])
                     self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname, 0, rights[i] | wreg.KEY_WOW64_64KEY)
                 else:
                     self.key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, self.keyname,0, rights[i])

@@ -125,7 +125,7 @@ def main():
     if ( args.filename == None and args.passwd == None and (args.registry == False or not platform.system().startswith('Windows')) ):
         parser.error('Error: No password file or password passed\n')
     if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
-        reg = wreg.WindowsRegistry("RealVNC", "vncserver")
+        reg = get_realvnc_key()
         ( args.passwd, key_type) = reg.getval("Password")
     elif not platform.system().startswith('Windows'):
 	print 'Cannot read from Windows Registry on a %s system' % platform.system()
@@ -159,7 +159,7 @@ def main():
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
     if ( args.registry and not args.decrypt and platform.system().startswith('Windows')):
-        reg = wreg.WindowsRegistry("RealVNC", "vncserver")
+        reg = get_realvnc_key()
         reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
     elif not platform.system().startswith('Windows'):
 	print 'Cannot write to Windows Registry on a %s system' % platform.system()
@@ -167,6 +167,23 @@ def main():
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )
     print "%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') )
+
+
+def get_realvnc_key():
+    reg = None
+
+    for k in ['vncserver', 'WinVNC4',]:
+        try:
+            reg = wreg.WindowsRegistry('RealVNC', k)
+            break
+        except WindowsError as e:
+            if 'The system cannot find the file specified' in str(e):
+                pass
+            else:
+                raise e
+
+    return reg
+
 
 if __name__ == '__main__':
 	main()

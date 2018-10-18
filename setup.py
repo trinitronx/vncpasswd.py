@@ -28,7 +28,7 @@ try:
         f.close()
 except ImportError:
     # m2r may not be installed in user environment
-    with open(readme_file) as f:
+    with open(README_MD_PATH) as f:
         readme = f.read()
 
 setup(

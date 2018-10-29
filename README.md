@@ -1,7 +1,7 @@
 vncpasswd.py
 ============
 [![Build Status](http://img.shields.io/travis/trinitronx/vncpasswd.py.svg)](https://travis-ci.org/trinitronx/vncpasswd.py)
-[![Gratipay](http://img.shields.io/gratipay/trinitronx.svg)](https://www.gratipay.com/trinitronx)
+<noscript><a href="https://liberapay.com/trinitronx/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 [![Downloads](https://img.shields.io/github/downloads/trinitronx/vncpasswd.py/latest/total.svg)](https://github.com/trinitronx/vncpasswd.py/releases/)
 
 Python implementation of vncpasswd, w/decryption abilities & extra features ;-)

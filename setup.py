@@ -7,6 +7,7 @@ ROOT_DIR          = os.path.dirname(os.path.abspath(SETUP_PY_FILENAME))
 README_MD_PATH    = os.path.join(ROOT_DIR, 'README.md')
 README_RST_PATH   = os.path.join(ROOT_DIR, 'README.rst')
 README_TXT_PATH   = os.path.join(ROOT_DIR, 'README.txt')
+VERSION_TXT_PATH  = os.path.join(ROOT_DIR, 'VERSION')
 
 try:
     from m2r import parse_from_file
@@ -31,9 +32,12 @@ except ImportError:
     with open(README_MD_PATH) as f:
         readme = f.read()
 
+with open(VERSION_TXT_PATH, 'r') as f:
+        version = f.read()
+
 setup(
     name='vncpasswd.py',
-    version='1.2.0',
+    version=version,
     packages=['d3des','WindowsRegistry',],
     license='License :: OSI Approved :: MIT License',
     long_description=readme,

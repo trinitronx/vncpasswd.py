@@ -1,3 +1,4 @@
 include *.txt
+exclude Dockerfile
 recursive-include examples *.txt *.py
 prune build

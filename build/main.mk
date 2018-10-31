@@ -37,8 +37,8 @@ ifeq (1,$(interactive))
 endif
 
 REGISTRY    ?= docker.io
-REPO_NAME   ?= trinitronx/$(BIN)
-REPO        ?= $(REGISTRY)/$(REPO_NAME)
+REPO_NAME   ?= $(BIN)
+REPO        ?= $(REGISTRY)/trinitronx/$(REPO_NAME)
 ENV         ?= dev
 BUILD_IMAGE ?= $(REGISTRY)/python
 
@@ -78,6 +78,7 @@ define output_tag_info
 	$(shell printf  'TRAVIS_PULL_REQUEST_BRANCH: %s'  '$(TRAVIS_PULL_REQUEST_BRANCH)')
 	$(shell printf  'NOT_LATEST:                 %s'  '$(NOT_LATEST)')
 	$(shell printf  'REGISTRY:                   %s'  '$(REGISTRY)')
+	$(shell printf  'REPO_NAME:                  %s'  '$(REPO_NAME)')
 	$(shell printf  'REPO:                       %s'  '$(REPO)')
 	$(shell printf  'DEPLOY_TAG:                 %s'  '$(DEPLOY_TAG)')
 endef

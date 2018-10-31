@@ -96,9 +96,10 @@ $(DOCKER_CONFIG)/config.json:
 	echo "$(DEPLOY_TAG)" > $@
 
 package: .packaged ## Generates a docker image for this project.
-	echo "TRAVIS_BRANCH: $(TRAVIS_BRANCH)"
-	echo "NOT_LATEST: $(NOT_LATEST)"
-	echo "DEPLOY_TAG: $(DEPLOY_TAG)"
+	$(info  TRAVIS_BRANCH:              $(TRAVIS_BRANCH))
+	$(info  TRAVIS_PULL_REQUEST_BRANCH: $(TRAVIS_PULL_REQUEST_BRANCH))
+	$(info  NOT_LATEST:                 $(NOT_LATEST))
+	$(info  DEPLOY_TAG:                 $(DEPLOY_TAG))
 
 $(REPO_NAME).tar: .packaged
 	$(eval DEPLOY_TAG := $(shell cat .packaged))

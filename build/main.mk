@@ -110,20 +110,11 @@ $(REPO_NAME).tar: .packaged
 save-image: $(REPO_NAME).tar ## Perform `docker save` on the packaged image.
 
 .shipped: .packaged | $(DOCKER_CONFIG)/config.json
-	@# The `; true` is to prevent grep from causing the target to fail if it doesn't match
 	$(eval DEPLOY_TAG := $(shell cat .packaged))
-	$(AWSCLI) ecr list-images --output json --repository-name $(REPO_NAME)  | \
-	    $(JQ_DOCKER) -r '.imageIds[].imageTag'                              | \
-	    grep '$(DEPLOY_TAG)' > $@; true
-	echo "INFO: ecr list-images";
-	$(AWSCLI) ecr list-images --output json --repository-name $(REPO_NAME)  | \
-	    $(JQ_DOCKER) -r '.imageIds[].imageTag'                              | \
-	    grep '$(DEPLOY_TAG)'; true
-	echo "INFO: $@ = $$(cat $@)";
 	if [ -z "$$(cat $@)" ]; then                                \
 	  rm $@;                                                    \
 	  $(DOCKER) push $(REPO):$(DEPLOY_TAG);                     \
-	  if [ -z "$(NOT_LATEST)" ]; then                          \
+	  if [ -z "$(NOT_LATEST)" ]; then                           \
 	    $(DOCKER) tag "$(REPO):$(DEPLOY_TAG)" "$(REPO):latest"; \
 	    $(DOCKER) push "$(REPO):latest";                        \
 	  fi;                                                       \

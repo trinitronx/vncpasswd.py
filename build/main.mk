@@ -60,9 +60,13 @@ else
 endif
 
 
-ifeq ($(TRAVIS_BRANCH),master)
-	NOT_LATEST :=
-	DEPLOY_TAG := $(shell cat VERSION)
+ifndef TRAVIS_PULL_REQUEST_BRANCH
+	ifeq ($(TRAVIS_BRANCH),master)
+		NOT_LATEST :=
+		DEPLOY_TAG := $(shell cat VERSION)
+	else
+		NOT_LATEST := true
+	endif
 else
 	NOT_LATEST := true
 endif

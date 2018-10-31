@@ -96,7 +96,9 @@ $(DOCKER_CONFIG)/config.json:
 	echo "$(DEPLOY_TAG)" > $@
 
 package: .packaged ## Generates a docker image for this project.
+	$(info  TRAVIS_EVENT_TYPE:          $(TRAVIS_EVENT_TYPE))
 	$(info  TRAVIS_BRANCH:              $(TRAVIS_BRANCH))
+	$(info  TRAVIS_PULL_REQUEST:        $(TRAVIS_PULL_REQUEST))
 	$(info  TRAVIS_PULL_REQUEST_BRANCH: $(TRAVIS_PULL_REQUEST_BRANCH))
 	$(info  NOT_LATEST:                 $(NOT_LATEST))
 	$(info  DEPLOY_TAG:                 $(DEPLOY_TAG))

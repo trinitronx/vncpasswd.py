@@ -36,7 +36,7 @@ ifeq (1,$(interactive))
 	TERRAFORM_ARGS := -it
 endif
 
-REGISTRY    ?= registry.hub.docker.io
+REGISTRY    ?= docker.io
 REPO_NAME   ?= trinitronx/$(BIN)
 REPO        ?= $(REGISTRY)/$(REPO_NAME)
 ENV         ?= dev

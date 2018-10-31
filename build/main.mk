@@ -37,7 +37,7 @@ ifeq (1,$(interactive))
 endif
 
 REGISTRY    ?= registry.hub.docker.io
-REPO_NAME   ?= $(BIN)
+REPO_NAME   ?= trinitronx/$(BIN)
 REPO        ?= $(REGISTRY)/$(REPO_NAME)
 ENV         ?= dev
 BUILD_IMAGE ?= $(REGISTRY)/python

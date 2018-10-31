@@ -36,9 +36,9 @@ ifeq (1,$(interactive))
 	TERRAFORM_ARGS := -it
 endif
 
-REGISTRY    ?= registry.hub.docker.io
-REPO_NAME   ?= trinitronx/$(BIN)
-REPO        ?= $(REGISTRY)/$(REPO_NAME)
+REGISTRY    ?= docker.io
+REPO_NAME   ?= $(BIN)
+REPO        ?= $(REGISTRY)/trinitronx/$(REPO_NAME)
 ENV         ?= dev
 BUILD_IMAGE ?= $(REGISTRY)/python
 
@@ -71,6 +71,18 @@ else
 	NOT_LATEST := true
 endif
 
+define output_tag_info
+	$(shell printf  'TRAVIS_EVENT_TYPE:          %s'  '$(TRAVIS_EVENT_TYPE)')
+	$(shell printf  'TRAVIS_BRANCH:              %s'  '$(TRAVIS_BRANCH)')
+	$(shell printf  'TRAVIS_PULL_REQUEST:        %s'  '$(TRAVIS_PULL_REQUEST)')
+	$(shell printf  'TRAVIS_PULL_REQUEST_BRANCH: %s'  '$(TRAVIS_PULL_REQUEST_BRANCH)')
+	$(shell printf  'NOT_LATEST:                 %s'  '$(NOT_LATEST)')
+	$(shell printf  'REGISTRY:                   %s'  '$(REGISTRY)')
+	$(shell printf  'REPO_NAME:                  %s'  '$(REPO_NAME)')
+	$(shell printf  'REPO:                       %s'  '$(REPO)')
+	$(shell printf  'DEPLOY_TAG:                 %s'  '$(DEPLOY_TAG)')
+endef
+
 # Auto-documented Makefile
 # Source: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help: ## Shows this generated help info for Makefile targets
@@ -96,12 +108,7 @@ $(DOCKER_CONFIG)/config.json:
 	echo "$(DEPLOY_TAG)" > $@
 
 package: .packaged ## Generates a docker image for this project.
-	$(info  TRAVIS_EVENT_TYPE:          $(TRAVIS_EVENT_TYPE))
-	$(info  TRAVIS_BRANCH:              $(TRAVIS_BRANCH))
-	$(info  TRAVIS_PULL_REQUEST:        $(TRAVIS_PULL_REQUEST))
-	$(info  TRAVIS_PULL_REQUEST_BRANCH: $(TRAVIS_PULL_REQUEST_BRANCH))
-	$(info  NOT_LATEST:                 $(NOT_LATEST))
-	$(info  DEPLOY_TAG:                 $(DEPLOY_TAG))
+	$(info $(call output_tag_info))
 
 $(REPO_NAME).tar: .packaged
 	$(eval DEPLOY_TAG := $(shell cat .packaged))
@@ -110,20 +117,11 @@ $(REPO_NAME).tar: .packaged
 save-image: $(REPO_NAME).tar ## Perform `docker save` on the packaged image.
 
 .shipped: .packaged | $(DOCKER_CONFIG)/config.json
-	@# The `; true` is to prevent grep from causing the target to fail if it doesn't match
 	$(eval DEPLOY_TAG := $(shell cat .packaged))
-	$(AWSCLI) ecr list-images --output json --repository-name $(REPO_NAME)  | \
-	    $(JQ_DOCKER) -r '.imageIds[].imageTag'                              | \
-	    grep '$(DEPLOY_TAG)' > $@; true
-	echo "INFO: ecr list-images";
-	$(AWSCLI) ecr list-images --output json --repository-name $(REPO_NAME)  | \
-	    $(JQ_DOCKER) -r '.imageIds[].imageTag'                              | \
-	    grep '$(DEPLOY_TAG)'; true
-	echo "INFO: $@ = $$(cat $@)";
 	if [ -z "$$(cat $@)" ]; then                                \
 	  rm $@;                                                    \
 	  $(DOCKER) push $(REPO):$(DEPLOY_TAG);                     \
-	  if [ -z "$(NOT_LATEST)" ]; then                          \
+	  if [ -z "$(NOT_LATEST)" ]; then                           \
 	    $(DOCKER) tag "$(REPO):$(DEPLOY_TAG)" "$(REPO):latest"; \
 	    $(DOCKER) push "$(REPO):latest";                        \
 	  fi;                                                       \
@@ -131,6 +129,7 @@ save-image: $(REPO_NAME).tar ## Perform `docker save` on the packaged image.
 	echo "$(DEPLOY_TAG)" > $@
 
 ship: .shipped ## Pushes the packaged docker image to the docker registry (ECR). Tags image with `VERSION` specified  and `latest` (unless the parameter `NOT_LATEST` is set)
+	$(info $(call output_tag_info))
 
 # Override in files including this one to execute before `.docker-container-*` calls `make` (inside the container).
 CONTAINER_PRE_BUILD_COMMAND ?=

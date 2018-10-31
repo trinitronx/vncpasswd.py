@@ -59,6 +59,18 @@ else
 	DEPLOY_TAG ?= $(shell TZ=UTC date +'%Y%m%dT%H%M%S')-$(shell git rev-parse --short HEAD)
 endif
 
+
+ifndef TRAVIS_PULL_REQUEST_BRANCH
+	ifeq ($(TRAVIS_BRANCH),master)
+		NOT_LATEST :=
+		DEPLOY_TAG := $(shell cat VERSION)
+	else
+		NOT_LATEST := true
+	endif
+else
+	NOT_LATEST := true
+endif
+
 # Auto-documented Makefile
 # Source: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help: ## Shows this generated help info for Makefile targets
@@ -77,13 +89,19 @@ $(DOCKER_CONFIG)/config.json:
 .packaged: ${PACKAGE_DEPENDENCIES}
 	if [ ! -z "$$($(DOCKER) images  $(REPO):$(DEPLOY_TAG))" ]; then                  \
 		$(DOCKER) build  $(DOCKER_BUILD_ARGS) -t $(REPO):$(DEPLOY_TAG) . ;           \
-		if [ -z "$${NOT_LATEST}" ]; then                                             \
+		if [ -z "$(NOT_LATEST)" ]; then                                             \
 			$(DOCKER) tag "$(REPO):$(DEPLOY_TAG)" "$(REPO):latest";                  \
 		fi;                                                                          \
 	fi
 	echo "$(DEPLOY_TAG)" > $@
 
 package: .packaged ## Generates a docker image for this project.
+	$(info  TRAVIS_EVENT_TYPE:          $(TRAVIS_EVENT_TYPE))
+	$(info  TRAVIS_BRANCH:              $(TRAVIS_BRANCH))
+	$(info  TRAVIS_PULL_REQUEST:        $(TRAVIS_PULL_REQUEST))
+	$(info  TRAVIS_PULL_REQUEST_BRANCH: $(TRAVIS_PULL_REQUEST_BRANCH))
+	$(info  NOT_LATEST:                 $(NOT_LATEST))
+	$(info  DEPLOY_TAG:                 $(DEPLOY_TAG))
 
 $(REPO_NAME).tar: .packaged
 	$(eval DEPLOY_TAG := $(shell cat .packaged))
@@ -105,7 +123,7 @@ save-image: $(REPO_NAME).tar ## Perform `docker save` on the packaged image.
 	if [ -z "$$(cat $@)" ]; then                                \
 	  rm $@;                                                    \
 	  $(DOCKER) push $(REPO):$(DEPLOY_TAG);                     \
-	  if [ -z "$${NOT_LATEST}" ]; then                          \
+	  if [ -z "$(NOT_LATEST)" ]; then                          \
 	    $(DOCKER) tag "$(REPO):$(DEPLOY_TAG)" "$(REPO):latest"; \
 	    $(DOCKER) push "$(REPO):latest";                        \
 	  fi;                                                       \

@@ -17,6 +17,6 @@ after_success:
         docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
       fi
       echo "Pushing built Docker Image to: $TRAVIS_REPO_SLUG" ;
-      docker push $TRAVIS_REPO_SLUG ;
     fi
+  - make ship
   - "[ -e \"~/.docker/config.json\" ] && shred -n 30 -u -z ~/.docker/config.json"

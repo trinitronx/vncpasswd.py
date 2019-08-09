@@ -11,7 +11,9 @@ script:
 after_success:
   - >
     if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_EVENT_TYPE" == "push" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then
-      if docker login --help  | grep -q '\-e'; then
+      if docker login --help  | grep -q '\-\-password\-stdin'; then
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin ;
+      elif docker login --help  | grep -q '\-e'; then
         docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
       else
         docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;

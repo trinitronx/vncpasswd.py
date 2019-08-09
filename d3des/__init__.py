@@ -1,1 +1,1 @@
-import d3des
+from . import d3des

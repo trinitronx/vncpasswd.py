@@ -1,1 +1,1 @@
-import WindowsRegistry
+from . import WindowsRegistry

@@ -14,8 +14,8 @@ import argparse
 import platform
 #from struct import pack, unpack
 
-import d3des as d
-if platform.system().startswith('Windows'): import WindowsRegistry as wreg 
+from d3des import d3des as d
+if platform.system().startswith('Windows'): from WindowsRegistry import WindowsRegistry as wreg
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]

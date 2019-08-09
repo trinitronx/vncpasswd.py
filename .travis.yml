@@ -18,5 +18,5 @@ after_success:
       fi
       echo "Pushing built Docker Image to: $TRAVIS_REPO_SLUG" ;
     fi
-  - make ship
+    make ship
   - "[ -e \"~/.docker/config.json\" ] && shred -n 30 -u -z ~/.docker/config.json"

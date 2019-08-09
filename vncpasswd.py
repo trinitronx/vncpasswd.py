@@ -6,7 +6,7 @@ __author__      = "James Cuzella"
 __copyright__   = "Copyright 2012,2013, James Cuzella"
 __credits__ = [ 'Yusuke Shinyama', 'Richard Outerbridge', 'Dan Hoey', 'Jim Gillogly', 'Phil Karn' ]
 __license__ = "MIT"
-__version__ = "0.0.2"
+__version__ = "1.2.1"
 __maintainer__ = "James Cuzella"
 
 import sys
@@ -14,8 +14,8 @@ import argparse
 import platform
 #from struct import pack, unpack
 
-import d3des as d
-if platform.system().startswith('Windows'): import WindowsRegistry as wreg 
+from d3des import d3des as d
+if platform.system().startswith('Windows'): from WindowsRegistry import WindowsRegistry as wreg
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]
@@ -128,7 +128,7 @@ def main():
         reg = get_realvnc_key()
         ( args.passwd, key_type) = reg.getval("Password")
     elif not platform.system().startswith('Windows'):
-	print 'Cannot read from Windows Registry on a %s system' % platform.system()
+        print 'Cannot read from Windows Registry on a %s system' % platform.system()
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
@@ -162,7 +162,7 @@ def main():
         reg = get_realvnc_key()
         reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
     elif not platform.system().startswith('Windows'):
-	print 'Cannot write to Windows Registry on a %s system' % platform.system()
+        print 'Cannot write to Windows Registry on a %s system' % platform.system()
 
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )

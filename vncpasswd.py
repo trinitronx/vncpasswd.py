@@ -128,7 +128,7 @@ def main():
         reg = get_realvnc_key()
         ( args.passwd, key_type) = reg.getval("Password")
     elif not platform.system().startswith('Windows'):
-	print 'Cannot read from Windows Registry on a %s system' % platform.system()
+        print 'Cannot read from Windows Registry on a %s system' % platform.system()
     if ( args.passwd != None and args.hex ):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
@@ -162,7 +162,7 @@ def main():
         reg = get_realvnc_key()
         reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
     elif not platform.system().startswith('Windows'):
-	print 'Cannot write to Windows Registry on a %s system' % platform.system()
+        print 'Cannot write to Windows Registry on a %s system' % platform.system()
 
     prefix = ('En','De')[args.decrypt == True]
     print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )

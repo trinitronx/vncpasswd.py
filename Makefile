@@ -10,7 +10,7 @@ setup: ## Run python setup.py sdist
 	python setup.py sdist
 
 install: ## Runs python setup.py install
-	$(MAKE) plan -C global
+	python setup.py install
 
 test: ## Runs tests
 	python vncpasswd.py -t

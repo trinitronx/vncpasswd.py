@@ -92,11 +92,7 @@ list: ## Just list all Makefile targets without help
 	@$(MAKE) -pRrq $(addprefix -f ,$(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | uniq | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | grep -v 'DEFAULT_GOAL' | xargs
 
 $(DOCKER_CONFIG)/config.json:
-	if docker login --help  | grep -q '\-e'; then \
-	  $(DOCKER) login -e="$(DOCKER_EMAIL)" -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)" ; \
-	else \
-	  $(DOCKER) login -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)" ; \
-	fi
+	echo "$(DOCKER_PASSWORD)" | docker login --username "$(DOCKER_USERNAME)" --password-stdin ; \
 
 .packaged: ${PACKAGE_DEPENDENCIES}
 	if [ ! -z "$$($(DOCKER) images  $(REPO):$(DEPLOY_TAG))" ]; then                  \

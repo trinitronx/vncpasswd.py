@@ -33,7 +33,7 @@ except ImportError:
         readme = f.read()
 
 with open(VERSION_TXT_PATH, 'r') as f:
-        version = f.read()
+        version = f.read().rstrip()
 
 setup(
     name='vncpasswd.py',

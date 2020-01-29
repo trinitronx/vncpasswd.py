@@ -1,7 +1,7 @@
 vncpasswd.py
 ============
 [![Build Status](http://img.shields.io/travis/trinitronx/vncpasswd.py.svg)](https://travis-ci.org/trinitronx/vncpasswd.py)
-<noscript><a href="https://liberapay.com/trinitronx/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+[![Donate using Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/trinitronx/donate)
 [![Downloads](https://img.shields.io/github/downloads/trinitronx/vncpasswd.py/latest/total.svg)](https://github.com/trinitronx/vncpasswd.py/releases/)
 
 Python implementation of vncpasswd, w/decryption abilities & extra features ;-)
@@ -45,6 +45,25 @@ If your system does not have an available `python2` in `PATH` linked:
     # Symlink `python2` to the resulting python2.7 binary
     # For example:
     ln -sf /usr/local/bin/python2.7 /usr/local/bin/python2
+
+Alternatively, use [`pyenv`][8]:
+
+- If on macOS, Homebrew method is preferred:
+
+        brew install pyenv
+
+- Otherwise, install via [`pyenv-installer`][9] script & restart your shell:
+
+        curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+        exec $SHELL
+
+- Build & Compile Python 2.7
+
+        pyenv install 2.7.17
+
+- Use `pyenv` in a shell with:
+
+        eval "$(pyenv init - )"
 
 
 ### Windows:
@@ -94,13 +113,21 @@ The `help` output explains the command line flags:
 >   passwd                A password to encrypt
 > 
 > optional arguments:
+>
 >   -h, --help            show this help message and exit
+>
 >   -d, --decrypt         Decrypt an obfuscated password.
+>
 >   -e, --encrypt         Encrypt a plaintext password. (default mode)
+>
 >   -H, --hex             Assume input is in hex.
+>
 >   -R, --registry        Input or Output to the windows registry.
+>
 >   -f FILENAME, --file FILENAME
+>
 >                         Input or Output to a specified file.
+>
 >   -t, --test            Run the unit tests for this program.
 
 ### Docker:
@@ -124,17 +151,93 @@ The docker container is ready-built with all dependencies needed.  Just mount in
 Testing:
 --------
 
-This project used TravisCI for Continuous Integration & Continuous Deployment to Docker Hub.  The `.travis.yml` contains the build steps.  To test this project, install build dependencies & run the tests:
-
-    pip install --user -r ./build/build-requirements.txt
+This project used TravisCI for Continuous Integration & Continuous Deployment to Docker Hub.  The `.travis.yml` contains the build steps.  To manually run the tests for this project:
+    
     make test
 
 Python Source Distribution:
 ---------------------------
 
+First install build dependencies from `./build/build-requirements.txt`.
+
+    pip install --user -r ./build/build-requirements.txt
+
 To create a python source distribution via `setuptools`:
 
     make setup
+
+Output files are placed in `dist/` directory.
+
+Python Binary Distribution:
+---------------------------
+
+First install build dependencies from `./build/build-requirements.txt`.
+
+    pip install --user -r ./build/build-requirements.txt
+
+To create a python binary distribution via `setuptools`:
+
+    make bdist
+
+Output files are placed in `dist/` directory.
+
+Python RPM Distribution:
+------------------------
+
+First install build dependencies from `./build/build-requirements.txt`.  Make sure you are on a RHEL / CentOS compatible system, with `rpm` installed.
+
+    pip install --user -r ./build/build-requirements.txt
+
+To create a python RPM distribution via `setuptools`:
+
+    make bdist_rpm
+
+Output files are placed in `dist/` directory.
+
+Python Windows self-extracting `.zip` Distribution:
+---------------------------------------------------
+
+First install build dependencies from `./build/build-requirements.txt`.  Make sure you are on a Windows compatible system, with compilation tools installed.
+
+    pip install --user -r ./build/build-requirements.txt
+
+To create a python binary Windows `.exe` self-extracting `.zip` distribution via `setuptools`:
+
+    make bdist_wininst
+    # Or, without GNU Make:
+    python setup.py bdist_wininst
+
+Output files are placed in `dist/` directory.
+
+Python `site-packages` Install:
+-------------------------------
+
+First install build dependencies from `./build/build-requirements.txt`.
+
+    pip install --user -r ./build/build-requirements.txt
+
+To install this into your system `site-packages` Python directory:
+
+    make install
+
+Installed bits include:
+
+- Python Libraries:
+  - `d3des`:
+        A Minimalistic DES implementation [`d3des.py` Python Library (Source from mythbuntu-common 0.72)][7]
+  - `WindowsRegistry`:
+        A Python class to simplify read/write access to the Windows Registry
+- This project's scripts / package info:
+  - `vncpasswd.py`:
+        The main executable Python script for this project.
+  - `pass2reg.cmd`:
+        A Windows batch script file that takes a password and writes it to the UltraVNC registry area.
+        It can also be saved to the registry directly with Python via `vncpasswd.py --registry`.
+        Originally part of [Mike Miller's blog post][1].
+  - `vncpasswd.py-1.2.1-py2.7.egg`
+        Python Egg package of this project
+  - `vncpasswd.py-1.2.1_-py2.7.egg-info`
+        Python Egg packaging metadata for this project
 
 Docker Image Build:
 -------------------
@@ -210,3 +313,9 @@ References:
     "GitHub Archive Program: Preserving open source software for future generations (Get your code into the GitHub Arctic Code Vault 02/02/2020)"
 [6]: https://github.com/python/cpython/tree/master/PCbuild
     "Building cPython on Windows: PCBuild/readme.txt"
+[7]: https://www.apt-browse.org/browse/ubuntu/trusty/universe/all/mythbuntu-common/0.72/file/usr/lib/python3/dist-packages/mythbuntu_common/d3des.py
+    "d3des.py Source Code from mythbuntu-common 0.72"
+[8]: https://github.com/pyenv/pyenv
+    "pyenv: Simple Python version management"
+[9]: https://github.com/pyenv/pyenv-installer
+    "pyenv-installer for pyenv and friends. It is inspired by rbenv-installer."

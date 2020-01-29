@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 import inspect
 import os, errno
 
@@ -39,10 +39,31 @@ setup(
     name='vncpasswd.py',
     version=version,
     packages=['d3des','WindowsRegistry',],
+    scripts=['vncpasswd.py', 'pass2reg.cmd'],
     license='License :: OSI Approved :: MIT License',
+    description='A Python implementation of vncpasswd, w/decryption abilities & extra features ;-)',
     long_description=readme,
+    platforms=['any'],
     author='James Cuzella',
     author_email='james.cuzella@lyraphase.com',
-    url='https://github.com/trinitronx/vncpasswd.py'
+    url='https://github.com/trinitronx/vncpasswd.py',
+    classifiers=[
+        "Programming Language :: Python :: 2 :: Only",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Natural Language :: English",
+        "Operating System :: MacOS",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Topic :: Security :: Cryptography",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: System :: Recovery Tools",
+        "Topic :: System :: Systems Administration",
+        "Topic :: Utilities"
+    ],
+    python_requires='<=2.7'
 )
 

@@ -83,7 +83,7 @@ define output_tag_info
 	$(shell printf  'DEPLOY_TAG:                 %s'  '$(DEPLOY_TAG)')
 endef
 
-debug:
+debug: ## Debug output from build/main.mk output_tag_info()
 	$(info $(call output_tag_info))
 
 # Auto-documented Makefile
@@ -127,7 +127,7 @@ save-image: $(REPO_NAME).tar ## Perform `docker save` on the packaged image.
 	fi
 	echo "$(DEPLOY_TAG)" > $@
 
-ship: .shipped ## Pushes the packaged docker image to the docker registry (ECR). Tags image with `VERSION` specified  and `latest` (unless the parameter `NOT_LATEST` is set)
+ship: .shipped ## Pushes the packaged docker image to the docker registry. Tags image with `VERSION` specified  and `latest` (unless the parameter `NOT_LATEST` is set)
 	$(info $(call output_tag_info))
 
 # Override in files including this one to execute before `.docker-container-*` calls `make` (inside the container).

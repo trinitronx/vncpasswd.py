@@ -4,6 +4,8 @@ VERSION_FILE            = VERSION
 VERSION                 = $(shell cat $(VERSION_FILE))
 PACKAGE_FILE            = $(REPO_NAME)-$(VERSION).tar.gz
 
+git_current := $(shell cut -c6- .git/HEAD)
+
 # GNU Automake style vars (overridable)
 PACKAGE     ?= $(REPO_NAME)
 top_srcdir  ?= .
@@ -34,7 +36,7 @@ test: ## Runs tests
 
 .PHONY: CHANGELOG
 CHANGELOG: CHANGELOG.md ## Generate CHANGELOG.md from git-chglog
-git-version.stamp: ## no-help
+git-version.stamp: .git/$(git_current) ## no-help
 	git describe --abbrev=4 2>/dev/null | cut -d'^' -f1 > git-version.stamp
 CHANGELOG.md: git-version.stamp ## no-help
 	git-chglog --config "$(top_srcdir)/.chglog/config.yml" --output $@

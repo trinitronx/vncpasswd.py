@@ -7,13 +7,18 @@ PACKAGE_FILE            = $(REPO_NAME)-$(VERSION).tar.gz
 git_current := $(shell cut -c6- .git/HEAD)
 
 # GNU Automake style vars (overridable)
-PACKAGE     ?= $(REPO_NAME)
-top_srcdir  ?= .
-distdir     ?= $(PACKAGE)-$(VERSION)
-top_distdir ?= $(distdir)
-DISTFILES   ?= $(top_srcdir)/dist/ MANIFEST
+PACKAGE        ?= $(REPO_NAME)
+top_srcdir     ?= .
+distdir        ?= $(PACKAGE)-$(VERSION)
+top_distdir    ?= $(distdir)
+top_builddir   ?= ./build
+CLEANFILES     ?= $(top_builddir)/lib $(top_builddir)/scripts-* $(top_builddir)/bdist.*
+DISTCLEANFILES ?= $(top_srcdir)/dist/ $(top_srcdir)/MANIFEST \
+                    $(top_srcdir)/vncpasswd.py.egg-info/ \
+                    $(top_srcdir)/README.rst $(top_srcdir)/README.txt \
+                    $(top_builddir)/
 
-include $(top_srcdir)/build/main.mk
+include $(top_srcdir)/build-aux/main.mk
 
 setup: ## Run python setup.py sdist
 	python setup.py sdist
@@ -43,13 +48,9 @@ CHANGELOG.md: git-version.stamp ## no-help
 
 .PHONY: clean
 clean:: ## Removes all temporary files - Executes make clean
-	rm -rf ./build/lib ./build/scripts-* ./build/bdist.*
-	rm -rf $(distdir)
-	rm -rf $(top_srcdir)/vncpasswd.py.egg-info/
+	rm -rf $(CLEANFILES)
 	rm -f $(top_srcdir)/git-version.stamp
-	rm -f $(top_srcdir)/MANIFEST
-	rm -f $(top_srcdir)/README.rst $(top_srcdir)/README.txt
 	find $(top_srcdir)/ -iname '*.pyc' -exec rm -f '{}' \;
 
-distclean:: ## Removes all files created by make setup
-	rm -rf $(DISTFILES)
+distclean:: clean ## Removes all files created by make setup / sdist, bdist* targets
+	rm -rf $(DISTCLEANFILES)

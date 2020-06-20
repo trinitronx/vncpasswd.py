@@ -160,7 +160,11 @@ Python Source Distribution:
 
 First install build dependencies from `./build/build-requirements.txt`.
 
-    pip install --user -r ./build/build-requirements.txt
+    make build-depends
+
+Note: This should run the following command. You may need to use `pip2` depending on your installed python version.
+
+    pip install --user -r ./build-aux/build-requirements.txt
 
 To create a python source distribution via `setuptools`:
 
@@ -173,7 +177,7 @@ Python Binary Distribution:
 
 First install build dependencies from `./build/build-requirements.txt`.
 
-    pip install --user -r ./build/build-requirements.txt
+    make build-depends
 
 To create a python binary distribution via `setuptools`:
 
@@ -186,7 +190,7 @@ Python RPM Distribution:
 
 First install build dependencies from `./build/build-requirements.txt`.  Make sure you are on a RHEL / CentOS compatible system, with `rpm` installed.
 
-    pip install --user -r ./build/build-requirements.txt
+    make build-depends
 
 To create a python RPM distribution via `setuptools`:
 

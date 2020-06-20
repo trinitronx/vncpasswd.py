@@ -1,7 +1,7 @@
 REPO_NAME              := vncpasswd.py
 SHELL                   = /bin/bash
 VERSION_FILE            = VERSION
-VERSION                 =`cat $(VERSION_FILE)`
+VERSION                 = $(shell cat $(VERSION_FILE))
 PACKAGE_FILE            = $(REPO_NAME)-$(VERSION).tar.gz
 
 # GNU Automake style vars (overridable)

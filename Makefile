@@ -20,6 +20,9 @@ DISTCLEANFILES ?= $(top_srcdir)/dist/ $(top_srcdir)/MANIFEST \
 
 include $(top_srcdir)/build-aux/main.mk
 
+build-depends: ## Install python pip build dependencies
+	pip install --user -r ./build-aux/build-requirements.txt
+
 setup: ## Run python setup.py sdist
 	python setup.py sdist
 sdist: setup

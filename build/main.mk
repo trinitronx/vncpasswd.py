@@ -83,6 +83,9 @@ define output_tag_info
 	$(shell printf  'DEPLOY_TAG:                 %s'  '$(DEPLOY_TAG)')
 endef
 
+debug:
+	$(info $(call output_tag_info))
+
 # Auto-documented Makefile
 # Source: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help: ## Shows this generated help info for Makefile targets

@@ -3,7 +3,7 @@ python:
   - "2.6"
   - "3.2"
 before_install:
-  - pip install --user -r ./build/build-requirements.txt
+  - make build-depends
 script:
   - make test
   - make setup

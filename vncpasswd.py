@@ -129,6 +129,7 @@ def main():
     if (args.test):
         run_tests()
 
+    _key_type = None
     if ( args.filename == None and args.passwd == None and (args.registry == False or not platform.system().startswith('Windows')) ):
         parser.error('Error: No password file or password passed\n')
     if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
@@ -141,7 +142,7 @@ def main():
             eprint('Are you sure that you have RealVNC / WinVNC4 installed?')
     elif ( args.registry and not platform.system().startswith('Windows') ):
         eprint('Cannot read from Windows Registry on a %s system' % platform.system())
-    if ( args.passwd != None and args.hex ):
+    if ( args.passwd != None and (args.hex or _key_type == wreg.WindowsRegistry.REG_SZ)):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
         args.passwd = do_file_in(args.filename, args.hex)

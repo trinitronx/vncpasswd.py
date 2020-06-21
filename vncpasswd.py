@@ -111,6 +111,8 @@ def main():
             help="Assume input is in hex.")
     parser.add_argument("-R", "--registry", dest="registry", action="store_true", default=False, \
             help="Input or Output to the windows registry.")
+    parser.add_argument("-o", "--stdout", dest="stdout", action="store_true", default=False, \
+            help="Input or Output only the resulting value to STDOUT. Always output ciphertext in hexidecimal, and plaintext in ASCII / UTF-8. A newline is appended to the value. Useful for scripting.")
     parser.add_argument("-f", "--file", dest="filename", \
             help="Input or Output to a specified file.")
     parser.add_argument("passwd", nargs='?', \
@@ -150,7 +152,7 @@ def main():
     elif ( len(hexpasswd) <= 16):
         crypted = do_crypt(args.passwd, args.decrypt)
     else:
-        if ( args.decrypt ):
+        if ( args.decrypt and not args.stdout ):
             print 'WARN: Ciphertext length was not divisible by 8 (hex/16).'
             print 'Length: %d' % len(args.passwd)
             print 'Hex Length: %d' % len(hexpasswd)
@@ -165,8 +167,14 @@ def main():
         print 'Cannot write to Windows Registry on a %s system' % platform.system()
 
     prefix = ('En','De')[args.decrypt == True]
-    print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )
-    print "%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') )
+    if ( args.stdout ):
+        if ( args.decrypt == True ):
+            print "%s" % ( crypted )
+        else:
+            print "%s" % ( crypted.encode('hex') )
+    else:
+        print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )
+        print "%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') )
 
 
 def get_realvnc_key():

@@ -19,8 +19,14 @@ import platform
 from d3des import d3des as d
 if platform.system().startswith('Windows'): from WindowsRegistry import WindowsRegistry as wreg
 
+DEBUG = False
+
 def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+    if DEBUG:
+        _file = sys.stdout
+    else:
+        _file = sys.stderr
+    print(*args, file=_file, **kwargs)
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]
@@ -88,6 +94,8 @@ def unhex(s):
     return s
 
 def run_tests(verbose=False):
+    global DEBUG
+    DEBUG = True
     print("Running Unit Tests...")
     import doctest
     import __main__

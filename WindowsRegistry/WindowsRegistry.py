@@ -96,8 +96,21 @@ class WindowsRegistry:
             self.can_write = True
 
     def eprint(self, *args, **kwargs):
-        """ Print message to STDERR """
-        print(*args, file=sys.stderr, **kwargs)
+        """
+            Print message to STDERR
+
+            Examples:
+            >>> r.debug = True
+            >>> r.eprint('hello')
+            hello
+            >>> r.debug = False
+            >>> r.eprint('expect nothing on STDOUT')
+        """
+        if self.debug:
+            _file = sys.stdout
+        else:
+            _file = sys.stderr
+        print(*args, file=_file, **kwargs)
 
     def getval(self, name):
         """ Get value for key in registry """
@@ -214,9 +227,9 @@ class WindowsRegistry:
 if __name__=="__main__":
     import doctest
     try:
-        r = WindowsRegistry('Santo Spirito', 'TestKey', create=1)
+        r = WindowsRegistry('Santo Spirito', 'TestKey', create=1, debug=True)
         # Run unit tests
-        verbose=False
+        verbose=True
         doctest.testmod(None, None, None, verbose, True)
         if r.key: print("Registry opened with: %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[r.right], r.right ))
         r.del_subkey('test')

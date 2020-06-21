@@ -133,7 +133,12 @@ def main():
         parser.error('Error: No password file or password passed\n')
     if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
         reg = get_realvnc_key()
-        ( args.passwd, key_type) = reg.getval("Password")
+        if reg != None:
+            #pylint: disable=unused-variable
+            ( args.passwd, _key_type) = reg.getval("Password")
+        else:
+            eprint('ERROR: Cannot find VNC registry key to read the password from')
+            eprint('Are you sure that you have RealVNC / WinVNC4 installed?')
     elif ( args.registry and not platform.system().startswith('Windows') ):
         eprint('Cannot read from Windows Registry on a %s system' % platform.system())
     if ( args.passwd != None and args.hex ):
@@ -144,7 +149,11 @@ def main():
     # If the hex encoded passwd length is longer than 16 hex chars and divisible
     # by 16, then we chop the passwd into blocks of 64 bits (16 hex chars)
     # (1 hex char = 4 binary bits = 1 nibble)
-    hexpasswd = args.passwd.encode('hex')
+    if ( args.passwd != None):
+        hexpasswd = args.passwd.encode('hex')
+    else:
+        eprint('ERROR: No password available to encode / decode!')
+        sys.exit(1)
     if ( len(hexpasswd) > 16 and (len(hexpasswd) % 16) == 0 ):
         eprint('INFO: Detected ciphertext > 64 bits... breaking into blocks to decrypt...')
         splitstr = split_len(args.passwd.encode('hex'), 16)
@@ -167,7 +176,11 @@ def main():
         do_file_out(args.filename, crypted, args.hex)
     if ( args.registry and not args.decrypt and platform.system().startswith('Windows')):
         reg = get_realvnc_key()
-        reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
+        if reg != None:
+            reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
+        else:
+            eprint('ERROR: Cannot find VNC registry key to store the password into')
+            eprint('Are you sure that you have RealVNC / WinVNC4 installed?')
     elif ( args.registry and not platform.system().startswith('Windows') ):
         eprint('WARN: Cannot write to Windows Registry on a %s system' % platform.system())
 

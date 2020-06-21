@@ -1,0 +1,50 @@
+{
+    //
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "redirectOutput": true
+        },
+        {
+            "name": "Python: Current File (External Terminal)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "externalTerminal",
+            "redirectOutput": true
+        },
+        {
+            "name": "Python: vncpasswd.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/vncpasswd.py",
+            "args": ["-o", "-e", "foo"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: vncpasswd.py Windows Registry Read (External Terminal)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/vncpasswd.py",
+            "args": ["-o", "-R", "-d"],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Python: vncpasswd.py Windows Registry Write (External Terminal - WARNING: Overwrites Current VNC Registry Value)",
+            "type": "python",
+            "request": "launch",
+            "python": ["runas.exe", "/savecred", "/user:administrator", "${command:python.interpreterPath}"],
+            "program": "${workspaceFolder}/vncpasswd.py",
+            "args": ["-o", "-R", "-e", "foo"],
+            "console": "externalTerminal"
+        }
+    ]
+}

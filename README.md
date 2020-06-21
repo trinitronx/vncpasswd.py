@@ -68,7 +68,19 @@ Alternatively, use [`pyenv`][8]:
 
 ### Windows:
 
-Please refer to the [`python/cpython/PCbuild/readme.txt`][6] for Windows-specific build instructions (Microsoft Visual Studio 2017).  The basic idea is to make sure you have build & compilation dependencies installed for Windows platform, and run the `build.bat` script.
+To install Python and get familiar with Visual Studio's Python development
+tools on Windows platforms, refer to [Getting Started with Python in VS Code][10].
+The official [Python Downloads][11] page should have `.msi` installers available
+for your Windows platform: (`x86-64 MSI installer`, `x86 MSI installer`).
+
+#### Building cPython
+
+Building cPython on Windows, is a more advanced topic that is out of scope for
+this guide.
+Please refer to the [`python/cpython/PCbuild/readme.txt`][6] for
+Windows-specific build instructions (Microsoft Visual Studio 2017).
+The basic idea is to make sure you have build & compilation dependencies
+installed for Windows platform, and run the `build.bat` script.
 
 Excerpt:
 
@@ -85,6 +97,13 @@ Excerpt:
 > the 32-bit Win32 platform.  It accepts several arguments to change
 > this behavior, try `build.bat -h` to learn more.
 
+More modern versions of VS Code have Extensions for Python and CMake support.
+You may wish to refer to [Getting Started with Python in VS Code][10].
+In addition, Windows Subsystem for Linux may allow you to run, and build this
+project using native Linux tools.  Again, this is beyond the scope of this
+guide because it is assumed that you know how to use these tools if you need
+them.
+
 Installation:
 -------------
 
@@ -97,6 +116,12 @@ This project installs from source via:
 Note: The "shebang" line at the top of the python script is: `#!/usr/bin/env python2`
 
 If you have `python2`, and `/usr/bin/env` binaries available in your system's `PATH`, you should be all set up to just run the executable script file as-is: `./vncpasswd.py`
+
+On Windows, this command will work in PowerShell.  However, it will open a
+`cmd.exe` window and close it too quickly to see any output.  If you require an
+interactive terminal experience, run with `python.exe`.  For example
+
+    python.exe .\vncpasswd.py --help
 
 To build a Docker image, or Python Source Distribution, see below or run `make help` to see all available `Makefile` targets.
 
@@ -160,7 +185,11 @@ Python Source Distribution:
 
 First install build dependencies from `./build/build-requirements.txt`.
 
-    pip install --user -r ./build/build-requirements.txt
+    make build-depends
+
+Note: This should run the following command. You may need to use `pip2` depending on your installed python version.
+
+    pip install --user -r ./build-aux/build-requirements.txt
 
 To create a python source distribution via `setuptools`:
 
@@ -173,7 +202,7 @@ Python Binary Distribution:
 
 First install build dependencies from `./build/build-requirements.txt`.
 
-    pip install --user -r ./build/build-requirements.txt
+    make build-depends
 
 To create a python binary distribution via `setuptools`:
 
@@ -186,7 +215,7 @@ Python RPM Distribution:
 
 First install build dependencies from `./build/build-requirements.txt`.  Make sure you are on a RHEL / CentOS compatible system, with `rpm` installed.
 
-    pip install --user -r ./build/build-requirements.txt
+    make build-depends
 
 To create a python RPM distribution via `setuptools`:
 
@@ -232,7 +261,8 @@ Installed bits include:
         The main executable Python script for this project.
   - `pass2reg.cmd`:
         A Windows batch script file that takes a password and writes it to the UltraVNC registry area.
-        It can also be saved to the registry directly with Python via `vncpasswd.py --registry`.
+        Calls out to `vncpasswd.py -o -e %1`, to encrypt the password first.
+        Note: It can also be saved to the RealVNC registry location directly with Python via `vncpasswd.py --registry`.
         Originally part of [Mike Miller's blog post][1].
   - `vncpasswd.py-1.2.1-py2.7.egg`
         Python Egg package of this project
@@ -319,3 +349,7 @@ References:
     "pyenv: Simple Python version management"
 [9]: https://github.com/pyenv/pyenv-installer
     "pyenv-installer for pyenv and friends. It is inspired by rbenv-installer."
+[10]: https://code.visualstudio.com/docs/python/python-tutorial#_prerequisites
+    "Windows: Getting Started with Python in VS Code"
+[11]: https://www.python.org/downloads/
+    "Python: Downloads"

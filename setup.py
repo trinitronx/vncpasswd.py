@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import inspect
 import os, errno
+import platform
 
 SETUP_PY_FILENAME = inspect.getframeinfo(inspect.currentframe()).filename
 ROOT_DIR          = os.path.dirname(os.path.abspath(SETUP_PY_FILENAME))
@@ -8,6 +9,10 @@ README_MD_PATH    = os.path.join(ROOT_DIR, 'README.md')
 README_RST_PATH   = os.path.join(ROOT_DIR, 'README.rst')
 README_TXT_PATH   = os.path.join(ROOT_DIR, 'README.txt')
 VERSION_TXT_PATH  = os.path.join(ROOT_DIR, 'VERSION')
+dist_bin_SCRIPTS = ['vncpasswd.py']
+
+if platform.system().startswith('Windows'):
+    dist_bin_SCRIPTS.append('pass2reg.cmd')
 
 try:
     from m2r import parse_from_file
@@ -39,7 +44,7 @@ setup(
     name='vncpasswd.py',
     version=version,
     packages=['d3des','WindowsRegistry',],
-    scripts=['vncpasswd.py', 'pass2reg.cmd'],
+    scripts=dist_bin_SCRIPTS,
     license='License :: OSI Approved :: MIT License',
     description='A Python implementation of vncpasswd, w/decryption abilities & extra features ;-)',
     long_description=readme,

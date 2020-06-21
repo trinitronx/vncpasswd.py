@@ -1,0 +1,9 @@
+include *.txt
+include README.md
+include VERSION
+include CHANGELOG.md
+include LICENSE
+exclude Dockerfile
+exclude Dockerfile.bdist_rpm
+recursive-include examples *.txt *.py
+prune build

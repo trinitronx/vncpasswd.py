@@ -2,11 +2,13 @@
 
 """vncpasswd.py: Python implementation of vncpasswd, w/decryption abilities & extra features ;-)"""
 
+from __future__ import print_function
+
 __author__      = "James Cuzella"
-__copyright__   = "Copyright 2012,2013, James Cuzella"
+__copyright__   = "Copyright 2012-2020, James Cuzella"
 __credits__ = [ 'Yusuke Shinyama', 'Richard Outerbridge', 'Dan Hoey', 'Jim Gillogly', 'Phil Karn' ]
 __license__ = "MIT"
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 __maintainer__ = "James Cuzella"
 
 import sys
@@ -16,6 +18,15 @@ import platform
 
 from d3des import d3des as d
 if platform.system().startswith('Windows'): from WindowsRegistry import WindowsRegistry as wreg
+
+DEBUG = False
+
+def eprint(*args, **kwargs):
+    if DEBUG:
+        _file = sys.stdout
+    else:
+        _file = sys.stderr
+    print(*args, file=_file, **kwargs)
 
 def split_len(seq, length):
     return [seq[i:i+length] for i in range(0, len(seq), length)]
@@ -76,14 +87,16 @@ def unhex(s):
         s = s.decode('hex')
     except TypeError as e:
         if e.message == 'Odd-length string':
-            print 'WARN: %s . Chopping last char off... "%s"' % ( e.message, s[:-1] )
+            eprint('WARN: %s . Chopping last char off... "%s"' % ( e.message, s[:-1] ))
             s = s[:-1].decode('hex')
         else:
             raise
     return s
 
 def run_tests(verbose=False):
-    print "Running Unit Tests..."
+    global DEBUG
+    DEBUG = True
+    print("Running Unit Tests...")
     import doctest
     import __main__
     (failure_count, test_count) = doctest.testmod(None, None, None, verbose, True)
@@ -93,12 +106,12 @@ def run_tests(verbose=False):
     ignore_methods = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', '__warningregistry__', 'argparse', 'sys' ]
     methods = [i for i in methods if not i in ignore_methods or ignore_methods.remove(i)]
 
-    print '%d tests in %s items.' % ( test_count, len(methods) )
+    print('%d tests in %s items.' % ( test_count, len(methods) ))
     if failure_count > 0:
-        print '%d out of %d tests failed' % (failure_count, test_count)
+        print('%d out of %d tests failed' % (failure_count, test_count))
     else:
-        print '%d passed and %d failed.' % ( pass_count, failure_count )
-        print 'Test passed.'
+        print('%d passed and %d failed.' % ( pass_count, failure_count ))
+        print('Test passed.')
     sys.exit(failure_count)
 
 def main():
@@ -111,6 +124,8 @@ def main():
             help="Assume input is in hex.")
     parser.add_argument("-R", "--registry", dest="registry", action="store_true", default=False, \
             help="Input or Output to the windows registry.")
+    parser.add_argument("-o", "--stdout", dest="stdout", action="store_true", default=False, \
+            help="Input or Output only the resulting value to STDOUT. Always output ciphertext in hexidecimal, and plaintext in ASCII / UTF-8. A newline is appended to the value. Useful for scripting.")
     parser.add_argument("-f", "--file", dest="filename", \
             help="Input or Output to a specified file.")
     parser.add_argument("passwd", nargs='?', \
@@ -122,14 +137,20 @@ def main():
     if (args.test):
         run_tests()
 
+    _key_type = None
     if ( args.filename == None and args.passwd == None and (args.registry == False or not platform.system().startswith('Windows')) ):
         parser.error('Error: No password file or password passed\n')
     if ( args.registry and args.decrypt and platform.system().startswith('Windows')):
         reg = get_realvnc_key()
-        ( args.passwd, key_type) = reg.getval("Password")
+        if reg != None:
+            #pylint: disable=unused-variable
+            ( args.passwd, _key_type) = reg.getval("Password")
+        else:
+            eprint('ERROR: Cannot find VNC registry key to read the password from')
+            eprint('Are you sure that you have RealVNC / WinVNC4 installed?')
     elif ( args.registry and not platform.system().startswith('Windows') ):
-        print 'Cannot read from Windows Registry on a %s system' % platform.system()
-    if ( args.passwd != None and args.hex ):
+        eprint('Cannot read from Windows Registry on a %s system' % platform.system())
+    if ( args.passwd != None and (args.hex or _key_type == wreg.WindowsRegistry.REG_SZ)):
         args.passwd = unhex(args.passwd)
     if ( args.filename != None and args.decrypt ):
         args.passwd = do_file_in(args.filename, args.hex)
@@ -137,36 +158,50 @@ def main():
     # If the hex encoded passwd length is longer than 16 hex chars and divisible
     # by 16, then we chop the passwd into blocks of 64 bits (16 hex chars)
     # (1 hex char = 4 binary bits = 1 nibble)
-    hexpasswd = args.passwd.encode('hex')
+    if ( args.passwd != None):
+        hexpasswd = args.passwd.encode('hex')
+    else:
+        eprint('ERROR: No password available to encode / decode!')
+        sys.exit(1)
     if ( len(hexpasswd) > 16 and (len(hexpasswd) % 16) == 0 ):
-        print 'INFO: Detected ciphertext > 64 bits... breaking into blocks to decrypt...'
+        eprint('INFO: Detected ciphertext > 64 bits... breaking into blocks to decrypt...')
         splitstr = split_len(args.passwd.encode('hex'), 16)
-        print 'INFO: Split blocks = %s' % splitstr
+        eprint('INFO: Split blocks = %s' % splitstr)
         cryptedblocks = []
         for sblock in splitstr:
             cryptedblocks.append( do_crypt(sblock.decode('hex'), args.decrypt) )
-            #print '%016s\t%s' % ( sblock, cryptedblocks )
+            #eprint('%016s\t%s' % ( sblock, cryptedblocks ))
             crypted = ''.join(cryptedblocks)
     elif ( len(hexpasswd) <= 16):
         crypted = do_crypt(args.passwd, args.decrypt)
     else:
-        if ( args.decrypt ):
-            print 'WARN: Ciphertext length was not divisible by 8 (hex/16).'
-            print 'Length: %d' % len(args.passwd)
-            print 'Hex Length: %d' % len(hexpasswd)
+        if ( args.decrypt and not args.stdout ):
+            eprint('WARN: Ciphertext length was not divisible by 8 (hex/16).')
+            eprint('Length: %d' % len(args.passwd))
+            eprint('Hex Length: %d' % len(hexpasswd))
         crypted = do_crypt(args.passwd, args.decrypt)
 
     if ( args.filename != None and not args.decrypt ):
         do_file_out(args.filename, crypted, args.hex)
     if ( args.registry and not args.decrypt and platform.system().startswith('Windows')):
         reg = get_realvnc_key()
-        reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
+        if reg != None:
+            reg.setval('Password', crypted, wreg.WindowsRegistry.REG_BINARY)
+        else:
+            eprint('ERROR: Cannot find VNC registry key to store the password into')
+            eprint('Are you sure that you have RealVNC / WinVNC4 installed?')
     elif ( args.registry and not platform.system().startswith('Windows') ):
-        print 'Cannot write to Windows Registry on a %s system' % platform.system()
+        eprint('WARN: Cannot write to Windows Registry on a %s system' % platform.system())
 
     prefix = ('En','De')[args.decrypt == True]
-    print "%scrypted Bin Pass= '%s'" % ( prefix, crypted )
-    print "%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') )
+    if ( args.stdout ):
+        if ( args.decrypt == True ):
+            print("%s" % ( crypted ))
+        else:
+            print("%s" % ( crypted.encode('hex') ))
+    else:
+        print("%scrypted Bin Pass= '%s'" % ( prefix, crypted ))
+        print("%scrypted Hex Pass= '%s'" % ( prefix, crypted.encode('hex') ))
 
 
 def get_realvnc_key():

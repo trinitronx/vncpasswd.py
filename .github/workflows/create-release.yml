@@ -1,0 +1,55 @@
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    # Push events matching v*,
+    # i.e. v1.0, v20.15.10
+    # Release these as short version tags with
+    # auto-generated changelog from git-chglog
+      - 'v*'
+
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set Release Version Ref
+        id: set_release_version_ref
+        shell: bash
+        run: |
+          version_ref="${github_ref}"
+          version="${version_ref/refs\/tags\//}"
+          echo $version
+          echo "::set-output name=version_ref::$version_ref"
+          echo "::set-output name=version::$version"
+        env:
+          github_ref: ${{ github.ref }}
+      - name: Generate changelog with git-chglog
+        uses: nuuday/github-changelog-action@v1.0.1
+        id: Changelog
+        env:
+          REPO: ${{ github.repository }}
+        with:
+          config_dir: '.chglog'
+          next_version: ""
+          filename: ""
+          args: "${{ steps.set_release_version_ref.outputs.version_ref }}"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.set_release_version_ref.outputs.version }}
+          body: |
+            ${{ steps.Changelog.outputs.changelog }}
+          draft: true
+          prerelease: true

@@ -1,19 +1,4 @@
 
-<a name="v1.2.2"></a>
-## [v1.2.2](https://github.com/trinitronx/range2cidr/compare/v1.2.1...v1.2.2)
-
-> 2020-06-20
-
-### Bug Fixes
-
-* **version:** Strip whitespace chars from end of VERSION string
-
-### Features
-
-* **CHANGELOG:** Adding create-release GitHub Action workflow w/CHANGELOG generation
-* **CHANGELOG:** Adding git-chglog configs for auto-generated CHANGELOG.md
-
-
 <a name="v1.2.1"></a>
 ## [v1.2.1](https://github.com/trinitronx/range2cidr/compare/v1.2.0...v1.2.1)
 

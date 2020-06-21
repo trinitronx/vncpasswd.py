@@ -1,4 +1,58 @@
 
+<a name="v1.2.3"></a>
+## [v1.2.3](https://github.com/trinitronx/range2cidr/compare/v1.2.2...v1.2.3)
+
+> 2020-06-21
+
+### Bug Fixes
+
+* **non-windows:** Fixes [#23](https://github.com/trinitronx/range2cidr/issues/23) - Handle `_key_type` check properly on non-windows platforms
+
+
+<a name="v1.2.2"></a>
+## [v1.2.2](https://github.com/trinitronx/range2cidr/compare/v1.2.1...v1.2.2)
+
+> 2020-06-21
+
+### Bug Fixes
+
+* **CHANGELOG:** Use git-version.stamp to determine when to re-generate CHANGELOG.md
+* **README:** Document Windows Python & VS Code install further
+* **Windows:** Only add pass2reg.cmd to distribution scripts on Windows platform
+* **Windows:** Update usage help output for pass2reg.cmd script
+* **Windows:** Fix pass2reg.cmd script for WinVNC3 registry write
+* **Windows:** Fixes [#20](https://github.com/trinitronx/range2cidr/issues/20) - Fix unhandled cases when Registry I/O failed or `args.passwd` is `None`
+* **Windows:** Fixes [#21](https://github.com/trinitronx/range2cidr/issues/21) - Properly decode Hexidecimal Registry values when type is REG_SZ
+* **non-windows:** Only print registry warning on non-Windows platforms when -R flag is requested (fixes [#18](https://github.com/trinitronx/range2cidr/issues/18))
+
+### Code Refactoring
+
+* **CHANGELOG:** Use full config.yml for `git-chglog`
+* **CHANGELOG:** Detect changes from .git/refs/* (When file commit ids change)
+* **Makefile:** Better handling for clean / distclean targets
+* **Makefile:** Use GNU Make shell instead of backtick
+* **Makefile:** Add distclean, debug targets; Use Automake style variables; Help text cleanup
+* **travis-ci:** Use new build-depends Makefile target
+
+### Features
+
+* **CHANGELOG:** Adding git-chglog configs for auto-generated CHANGELOG.md
+* **CHANGELOG:** Adding create-release GitHub Action workflow w/CHANGELOG generation
+* **CHANGELOG:** Update CHANGELOG for v1.2.2
+* **CHANGELOG:** Add generated CHANGELOG.md
+* **Makefile:** Document `make build-depends` target in README.md
+* **Makefile:** Add `make build-depends` target to install build dependencies via pip
+* **STDOUT:** Add `-o` / `--stdout` flags for quieter and scriptable ASCII (decrypted plaintext) or HEX (ciphertext) output
+* **Windows:** Add bdist_msi Makefile & VSCode targets
+* **Windows:** Add debug functionality to WindowsRegistry class & make warnings quieter by default
+* **Windows:** Add debug functionality to doctests
+* **Windows:** Document pass2reg.cmd that is installed on Windows %PATH%
+* **bdist_rpm:** Fix settings for building bdist_rpm target
+* **eprint:** Implement STDERR print function eprint() & convert all print() calls for Python 3
+* **vscode:** Adding VSCode tasks.json for common project Makefile tasks
+* **vscode:** Adding VSCode launch.json for common project Debug tasks
+
+
 <a name="v1.2.1"></a>
 ## [v1.2.1](https://github.com/trinitronx/range2cidr/compare/v1.2.0...v1.2.1)
 

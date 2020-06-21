@@ -8,7 +8,7 @@ __author__      = "James Cuzella"
 __copyright__   = "Copyright 2012-2020, James Cuzella"
 __credits__ = [ 'Yusuke Shinyama', 'Richard Outerbridge', 'Dan Hoey', 'Jim Gillogly', 'Phil Karn' ]
 __license__ = "MIT"
-__version__ = "1.2.2"
+__version__ = "1.2.3"
 __maintainer__ = "James Cuzella"
 
 import sys

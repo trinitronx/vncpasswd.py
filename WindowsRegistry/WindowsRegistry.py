@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import _winreg as wreg
 import cPickle as pickle
@@ -27,8 +28,8 @@ class WindowsRegistry:
 
     RIGHTSDICT = {  wreg.KEY_ALL_ACCESS: 'KEY_ALL_ACCESS', wreg.KEY_WRITE: 'KEY_WRITE', wreg.KEY_READ: 'KEY_READ', wreg.KEY_QUERY_VALUE: 'KEY_QUERY_VALUE', wreg.KEY_SET_VALUE: 'KEY_SET_VALUE', wreg.KEY_CREATE_SUB_KEY: 'KEY_CREATE_SUB_KEY', wreg.KEY_ENUMERATE_SUB_KEYS: 'KEY_ENUMERATE_SUB_KEYS' }
     RIGHTS_WRITABLE = [ wreg.KEY_ALL_ACCESS, wreg.KEY_WRITE, wreg.KEY_CREATE_SUB_KEY, wreg.KEY_SET_VALUE ]
-        
-    def __init__(self, company="RealVNC", project="WinVNC4", create=0):
+
+    def __init__(self, company="RealVNC", project="WinVNC4", create=0, debug=False):
         """
             Constructor to open registry key
 
@@ -43,9 +44,10 @@ class WindowsRegistry:
             True
             >>> r.key.__class__
             <type 'PyHKEY'>
-            
+
         """
         self.create = create
+        self.debug = debug
         self.company = company
         self.project = project
         self.keyname = "Software\\%s\\%s" % (self.company, self.project)
@@ -82,12 +84,20 @@ class WindowsRegistry:
                 #print "Tried rights = %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[rights[i]], rights[i] )
                 i=i+1
         if self.key == None:
-            print e.strerror
-            print "Failed to open Registry with rights = %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[rights[i]], rights[i] )
-            print "Try running as Administrator?"
+            if self.debug:
+                self.eprint(e.strerror)
+                self.eprint("WARN: Failed to open Registry Key '%s' with rights = %s (0x%x)" % ( self.keyname, WindowsRegistry.RIGHTSDICT[rights[i]], rights[i] ))
+                self.eprint("WARN: Either the Registry Key does not exist, or you do not have permissions")
+                self.eprint("INFO: This might be OK if you do not have the version of RealVNC that uses this particular registry key")
+                self.eprint("INFO: The host program will retry with other possible registry keys")
+                self.eprint("INFO: Try running as Administrator?")
             raise e
         if self.right in WindowsRegistry.RIGHTS_WRITABLE:
             self.can_write = True
+
+    def eprint(self, *args, **kwargs):
+        """ Print message to STDERR """
+        print(*args, file=sys.stderr, **kwargs)
 
     def getval(self, name):
         """ Get value for key in registry """
@@ -168,7 +178,7 @@ class WindowsRegistry:
             >>> try:
             ...     r.pget_subkey('test_remove_subkey')
             ... except WindowsError:
-            ...     print 'delete success'
+            ...     print('delete success')
             delete success
         """
         if not self.can_write:
@@ -184,7 +194,7 @@ class WindowsRegistry:
             >>> try:
             ...     r.getval('test_remove_stringval')
             ... except WindowsError:
-            ...     print 'delete success'
+            ...     print('delete success')
             delete success
         """
         if not self.can_write:
@@ -208,7 +218,7 @@ if __name__=="__main__":
         # Run unit tests
         verbose=False
         doctest.testmod(None, None, None, verbose, True)
-        if r.key: print "Registry opened with: %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[r.right], r.right )
+        if r.key: print("Registry opened with: %s (0x%x)" % ( WindowsRegistry.RIGHTSDICT[r.right], r.right ))
         r.del_subkey('test')
         r.del_subkey("testp_int")
         r.del_subkey("testp_str")

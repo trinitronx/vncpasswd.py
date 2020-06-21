@@ -1,4 +1,14 @@
 
+<a name="v1.2.3"></a>
+## [v1.2.3](https://github.com/trinitronx/range2cidr/compare/v1.2.2...v1.2.3)
+
+> 2020-06-21
+
+### Bug Fixes
+
+* **non-windows:** Fixes [#23](https://github.com/trinitronx/range2cidr/issues/23) - Handle `_key_type` check properly on non-windows platforms
+
+
 <a name="v1.2.2"></a>
 ## [v1.2.2](https://github.com/trinitronx/range2cidr/compare/v1.2.1...v1.2.2)
 

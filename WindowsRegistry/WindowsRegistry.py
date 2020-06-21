@@ -7,7 +7,7 @@ import platform
 class WindowsRegistry:
     """ A class to simplify read/write access to the Windows Registry """
     __author__      = "James Cuzella"
-    __copyright__   = "Copyright 2012,2013, James Cuzella"
+    __copyright__   = "Copyright 2012-2020, James Cuzella"
     __credits__ = [ 'Based on a class by', 'Dirk Holtwick', 'http://code.activestate.com/recipes/146305-windows-registry-for-dummies/' ]
     __license__ = "MIT"
 

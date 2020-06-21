@@ -30,7 +30,7 @@ sdist: setup
 bdist: ## Run python setup.py bdist
 	python setup.py bdist
 
-bdist_rpm: ## Run python setup.py bdist_rpm
+bdist_rpm: build-depends ## Run python setup.py bdist_rpm
 	python setup.py bdist_rpm
 
 bdist_wininst: ## Run python setup.py bdist_wininst

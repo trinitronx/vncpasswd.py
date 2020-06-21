@@ -45,6 +45,20 @@
             }
         },
         {
+            "label": "Run setup.py bdist_msi",
+            "type": "shell",
+            "command": "make bdist_msi",
+            "windows": {
+                "command": "${command:python.interpreterPath}",
+                "args": [".\\setup.py", "bdist_msi"]
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
             "label": "Run setup.py bdist_wininst",
             "type": "shell",
             "command": "make bdist_wininst",

@@ -36,6 +36,9 @@ bdist_rpm: build-depends ## Run python setup.py bdist_rpm
 bdist_wininst: ## Run python setup.py bdist_wininst
 	python setup.py bdist_wininst
 
+bdist_msi: ## Run python setup.py bdist_msi
+	python setup.py bdist_msi
+
 install: ## Runs python setup.py install
 	python setup.py install
 

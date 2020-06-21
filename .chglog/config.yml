@@ -11,7 +11,10 @@ options:
         - fix
         - perf
         - refactor
+    sort_by: Scope
   commit_groups:
+    group_by: Type
+    sort_by: Title
     title_maps:
       feat: Features
       fix: Bug Fixes
@@ -23,6 +26,21 @@ options:
       - Type
       - Scope
       - Subject
+  issues:
+    prefix:
+      - #
+  refs:
+    actions:
+      - Closes
+      - Fixes
+  merges:
+    pattern: "^Merge branch '(\\w+)'$"
+    pattern_maps:
+      - Source
+  reverts:
+    pattern: "^Revert \"([\\s\\S]*)\"$"
+    pattern_maps:
+      - Header
   notes:
     keywords:
       - BREAKING CHANGE

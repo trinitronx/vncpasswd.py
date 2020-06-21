@@ -261,7 +261,8 @@ Installed bits include:
         The main executable Python script for this project.
   - `pass2reg.cmd`:
         A Windows batch script file that takes a password and writes it to the UltraVNC registry area.
-        It can also be saved to the registry directly with Python via `vncpasswd.py --registry`.
+        Calls out to `vncpasswd.py -o -e %1`, to encrypt the password first.
+        Note: It can also be saved to the RealVNC registry location directly with Python via `vncpasswd.py --registry`.
         Originally part of [Mike Miller's blog post][1].
   - `vncpasswd.py-1.2.1-py2.7.egg`
         Python Egg package of this project

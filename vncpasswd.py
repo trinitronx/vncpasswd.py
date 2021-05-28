@@ -169,7 +169,7 @@ def main():
     else:
         eprint('ERROR: No password available to encode / decode!')
         sys.exit(1)
-    if ( len(hexpasswd) > 16 and (len(hexpasswd) % 16) == 0 ):
+    if len(hexpasswd) > 16:
         eprint('INFO: Detected ciphertext > 64 bits... breaking into blocks to decrypt...')
         splitstr = split_len(args.passwd.encode('hex'), 16)
         eprint('INFO: Split blocks = %s' % splitstr)
